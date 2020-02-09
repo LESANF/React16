@@ -1,0 +1,55 @@
+<return types>
+
+이전 리액트는 컴포넌트 아니면 null이였음
+
+그래서 string 같은걸 리턴할 수 없었음. 2개의 엘리먼트를 리턴하는것이니.
+
+return은 하나만 할 수 있지만, 2개를 리턴하고싶을 때도 있다 이럴때 Fragment를 씀.
+
+import React, { Fragment } from "react"; 로 가져오고 
+
+<>
+    <header></header>
+    <footer></footer>
+</>
+
+다음과 같이 쓸 수 있음.
+
+<Fragment> 
+     <header></header>
+     <footer></footer>
+</Fragment>
+
+는 같은거임. 그리고 return String이 가능해짐.
+
+============================================
+
+<portals>
+
+리액트는 div를 찾아서 마운트함. index에서 root id에서 마운트 하는것처럼.
+
+리액트 루트 밖에서 렌더할 때 사용하는게 포탈임. 
+
+<header><h1>Cant touch this</h1></header>
+    <span id="king"></span>
+    <div id="root"></div>
+
+직접 index.html에서 추가해줬음 root경로 이외에 header,h1,span을 직접 넣었고 이건 리액트 경로밖임.
+
+이제 우리가 App.js안에서 컴포넌트를 만들고 포탈을 만들어서 span에 렌더되게 할거임.
+
+import { createPortal } from "react-dom"; 포탈을가져오자 이건 dom에 들어있음.
+
+const A = () => "This is Portal"; 간단한 짧은 컴포넌트생성.
+
+class RealPortal extends Component {
+  render() {
+    return createPortal(<A />, document.getElementById("king"));
+  }
+}
+
+RealPortal변수명으로 정의해주고 createPortal()에 첫번째 인자는 넘길 컴포넌트 두번째인자는 어디에 할건지 위치를 알려줘야함. 
+
+king은 span의 id임. 이렇게 포탈을 사용함.
+
+=============================================

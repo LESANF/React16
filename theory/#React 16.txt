@@ -53,3 +53,98 @@ RealPortal변수명으로 정의해주고 createPortal()에 첫번째 인자는 
 king은 span의 id임. 이렇게 포탈을 사용함.
 
 =============================================
+
+<error boundaries>
+
+컴포넌트로 하여금 컴포넌트 칠드런의 에러를 관리할 수 있게 한다.
+
+Error Boundaries는 리액트 기능으로  부모 컴포넌트에 componentDidCatch를 사용하면 에러를 핸들링 할 수있다.
+
+componentDIdCatch에서 에러발생시 hasError:true로 설정하고 
+
+본문에 this.state.hasError? 구문을 사용하면 에러가 있을떄와 없을떄로 대응할 수 있다
+
+근데 이렇게되면 모든 컴포넌트에 hasError을 사용해야하기때문에 다음강의 Higher Order Component를 사용한다.
+
+=============================================
+
+<Higher order Components>
+
+{hasError ? <ErrorFallback /> : <ErrorMaker />} 다음과같이 모든 컴포넌트에 이렇게 넣어서 작업하는것은 매우 불편하다
+
+그렇기 때문에 HOC를 쓸거임.
+
+이건 컴포넌트를 가져오고 이건 함수형이 될거임. 이함수가 리턴하는건 클래스임. 
+
+const HOC = ProtectComponent =>
+  class Hoc2 extends Component {
+    state = {
+      hasError: false
+    };
+
+    componentDidCatch = () => {
+      this.setState({
+        hasError: true
+      });
+    };
+
+    render() {
+      const { hasError } = this.state;
+      if (hasError) {
+        return <ErrorFallback />;
+      } else {
+        return <ProtectComponent />;
+      }
+    }
+  };
+
+이런식으로 HOC을 만들고 우리가 에러를 판단할 컴포넌트를 가져오는거다.
+
+const PErrorMaker = HOC(ErrorMaker); 이런식으로 ErrorMaker가 인자로 HOC에들어가서 ProtectComponent에 들어가는거임.
+
+else에서 return할때 결국 <ProtectComponent />;는 <ErrorMaker />;가 됨.
+
+export default HOC(App); 이렇게 export되는 컴포넌트도 에러체크를 해줄 수 있음.
+
+=============================================
+
+this.setState에서 null로 값을 주는것이 리액트16에 나온 방법임 매우유용함.
+
+class Pizza extends Component {
+  state = {
+    pizzas: 0
+  };
+
+  render() {
+    const { pizzas } = this.state;
+
+    return (
+      <button onClick={this.handleClick}>{`I eaten ${pizzas} ${
+        pizzas === 1 ? "pizza" : "pizzas"
+      }`}</button>
+    );
+  }
+
+다음과같은 Pizza컴포넌트가있음. 버튼을 누르면 this.handleClick으로 이동함.
+
+handleClick = () => {
+    this.setState(Eat);
+  };
+
+handleClick은 Pizza 컴포넌트 안에있는거임. this.setState로 Eat함수를 실행할 수 있음.
+
+setState에 함수를 파라미터로 전달하는거임. 이렇게 함수를 전달하면 state와 props의 값을 얻을 수 있음.
+
+const Eat = (state, props) => {
+  const { pizzas } = state;
+
+  if (pizzas < MAX_PIZZA) {
+    return { pizzas: pizzas + 1 };
+  } else {
+    return null;
+  }
+};
+
+Eat 컴포넌트는 state와 props를 인자로받음. 그리고 return 해준다 pizzas와 null을 
+
+MAX_PIZZA는 전역변수로 10이라고했음. 만약 state안의 pizzas가 10이넘으면 null을 반환하는거임. 이렇게 사용할 수 있음.

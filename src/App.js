@@ -1,28 +1,40 @@
 import React, { Component } from "react";
-import { createPortal } from "react-dom";
 
-class RealPortal extends Component {
-  render() {
-    return createPortal(<A />, document.getElementById("king"));
+const MAX_PIZZA = 10;
+
+const Eat = (state, props) => {
+  const { pizzas } = state;
+
+  if (pizzas < MAX_PIZZA) {
+    return { pizzas: pizzas + 1 };
+  } else {
+    return null;
   }
-}
+};
 
-const A = () => "This is Portal";
+class Pizza extends Component {
+  state = {
+    pizzas: 0
+  };
 
-class Potato extends Component {
   render() {
-    return "SEX111";
+    const { pizzas } = this.state;
+
+    return (
+      <button onClick={this.handleClick}>{`I eaten ${pizzas} ${
+        pizzas === 1 ? "pizza" : "pizzas"
+      }`}</button>
+    );
   }
+
+  handleClick = () => {
+    this.setState(Eat);
+  };
 }
 
 class App extends Component {
   render() {
-    return (
-      <>
-        <Potato />
-        <RealPortal />
-      </>
-    );
+    return <Pizza />;
   }
 }
 
